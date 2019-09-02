@@ -86,7 +86,23 @@ class cifar10_data:
     image, target = self.queue.dequeue()
 
     # Data Augmentation
-    
+    if augmentation:
+      image = tf.image.resize_image_with_crop_or_pad(image, self.IMAGE_HEIGHT+4, self.IMAGE_WIDTH+4)
+      image = tf.random_crop(image, [self.IMAGE_HEIGHT, self.IMAGE_WIDTH, self.NUM_OF_CHANNELS])
+      image = tf.image.random_flip_left_right(image)
+
+    image = tf.image.per_image_standardization(image)
+
+    if shuffle:
+      images_batch, target_batch = tf.train.shuffle_batch([image, target],
+                                                          batch_size=self.batch_size,
+                                                          capacity=self.batch_queue_capacity,
+                                                          min_after_dequeue=self.min_after_dequeue)
+    else:
+      images_batch, target_batch = tf.train.batch([image, target],
+                                                  batch_size=self.batch_size,
+                                                  capacity=self.batch_queue_capacity)
+
     def enqueue(sess):
       under = 0
       max = len(raw_images)

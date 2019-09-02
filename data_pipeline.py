@@ -103,4 +103,26 @@ class cifar10_data:
                                                   batch_size=self.batch_size,
                                                   capacity=self.batch_queue_capacity)
 
+    def enqueue(sess):
+      under = 0
+      max = len(raw_images)
+      while not self.coord.should_stop():
+        upper = under + self.feed_size
+        if upper <= max:
+          curr_data = raw_images[under:upper]
+          curr_target = raw_targets[under:upper]
+          under = upper
+        else:
+          rest = upper - max
+          curr_data = np.concatenate((raw_images[under:max], raw_images[0:rest]))
+          curr_target = np.concatenate((raw_targets[under:max], raw_targets[0:rest]))
+          under = rest
+
+        sess.run(enqueue_op, feed_dict={image_input: curr_data,
+                                        target_input: curr_target})
+
    
+  def close(self):
+    self.queue.close(cancel_pending_enqueues=True)
+    self.coord.request_stop()
+    self.coord.join(self.threads)

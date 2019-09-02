@@ -1,11 +1,3 @@
-###############################################################################
-#
-##############################################################################
-# Author:       Imanol Schlag (more info on ischlag.github.io)
-# Description:  CIFAR-10 input pipeline
-# Date:         11.2016
-#
-#
 
 """ Usage:
 import tensorflow as tf

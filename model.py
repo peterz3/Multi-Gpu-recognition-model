@@ -67,3 +67,12 @@ if NUM_GPUS == 1:
               optimizer=opt,
               loss='sparse_categorical_crossentropy',
               metrics=['sparse_categorical_accuracy'])
+else:
+    mirrored_strategy = tf.distribute.MirroredStrategy()
+    with mirrored_strategy.scope():
+      model = resnet.resnet56(img_input=img_input, classes=NUM_CLASSES)
+      model.compile(
+                optimizer=opt,
+                loss='sparse_categorical_crossentropy',
+                metrics=['sparse_categorical_accuracy'])  
+

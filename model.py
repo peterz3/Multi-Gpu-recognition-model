@@ -57,3 +57,13 @@ train_dataset = train_dataset.map(augmentation).map(normalize).shuffle(NUM_TRAIN
 test_dataset = test_dataset.map(normalize).batch(BS_PER_GPU * NUM_GPUS, drop_remainder=True)
 
 
+input_shape = (HEIGHT, WIDTH, NUM_CHANNELS)
+img_input = tf.keras.layers.Input(shape=input_shape)
+opt = keras.optimizers.SGD(learning_rate=0.1, momentum=0.9)
+
+if NUM_GPUS == 1:
+    model = resnet.resnet56(img_input=img_input, classes=NUM_CLASSES)
+    model.compile(
+              optimizer=opt,
+              loss='sparse_categorical_crossentropy',
+              metrics=['sparse_categorical_accuracy'])

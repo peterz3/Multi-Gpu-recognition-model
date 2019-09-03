@@ -76,3 +76,25 @@ else:
                 loss='sparse_categorical_crossentropy',
                 metrics=['sparse_categorical_accuracy'])  
 
+log_dir="logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+file_writer = tf.summary.create_file_writer(log_dir + "/metrics")
+file_writer.set_as_default()
+tensorboard_callback = TensorBoard(
+  log_dir=log_dir,
+  update_freq='batch',
+  histogram_freq=1)
+
+lr_schedule_callback = LearningRateScheduler(schedule)
+
+model.fit(train_dataset,
+          epochs=NUM_EPOCHS,
+          validation_data=test_dataset,
+          validation_freq=1,
+          callbacks=[tensorboard_callback, lr_schedule_callback])
+model.evaluate(test_dataset)
+
+model.save('model.h5')
+
+new_model = keras.models.load_model('model.h5')
+ 
+new_model.evaluate(test_dataset)

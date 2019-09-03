@@ -52,3 +52,8 @@ def schedule(epoch):
 train_dataset = tf.data.Dataset.from_tensor_slices((x,y))
 test_dataset = tf.data.Dataset.from_tensor_slices((x_test, y_test))
 
+tf.random.set_seed(22)
+train_dataset = train_dataset.map(augmentation).map(normalize).shuffle(NUM_TRAIN_SAMPLES).batch(BS_PER_GPU * NUM_GPUS, drop_remainder=True)
+test_dataset = test_dataset.map(normalize).batch(BS_PER_GPU * NUM_GPUS, drop_remainder=True)
+
+
